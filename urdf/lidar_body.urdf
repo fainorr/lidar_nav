@@ -2,7 +2,7 @@
 
   <!-- root link, on the ground just below the model origin -->
   <link name="base_footprint">
-   <visual>
+    <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
         <box size="0.001 0.001 0.001" />
@@ -11,37 +11,37 @@
   </link>
 
   <joint name="base_link_joint" type="fixed">
-    <origin xyz="0.0 0 1.25" rpy="0 0 0" />
+    <origin xyz="0.0 0.0 0.37" rpy="0 0 0" />
     <parent link="base_footprint"/>
-    <child link="base_link" />
+    <child link="base_link"/>
   </joint>
 
   <!-- the model -->
   <link name="base_link">
     <inertial>
       <mass value="50" />
-      <origin xyz="0 0 -1.25" />
+      <origin xyz="0 0 0.0" />
       <inertia ixx="50.0" ixy="0.0" ixz="0.0"
         iyy="50.0" iyz="0.0"
         izz="50.0" />
     </inertial>
     <visual>
       <geometry>
-        <box size="0.2 0.8 .5" /> <!-- does not need to match collision -->
+        <box size="0.9 0.23 0.74" /> <!-- does not need to match collision -->
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0 0 -1.0" />
+      <origin xyz="0 0 0.37" />
       <geometry>
-        <cylinder length="0.5" radius="0.25" />
+         <box size="0.9 0.4 0.74"/>
       </geometry>
     </collision>
   </link>
 
-    <joint name="camera_joint" type="fixed">
+  <joint name="camera_joint" type="fixed">
     <axis xyz="0 1 0" />
     <origin xyz="0 0 1" rpy="0 0 0"/>
-    <parent link="base_link"/>
+    <parent link="base_footprint"/>
     <child link="camera_link"/>
   </joint>
 
@@ -79,7 +79,7 @@
     </plugin>
   </gazebo>
 
-   <gazebo reference="camera_link">
+  <gazebo reference="camera_link">
     <sensor type="camera" name="camera1">
       <update_rate>30.0</update_rate>
       <camera name="head">
@@ -120,31 +120,31 @@
   </gazebo>
 
   <joint name="laser_joint" type="fixed">
-        <axis xyz="0 1 0" />
-        <origin xyz="0 0 0.8" rpy="0 0 0"/>
-        <parent link="base_link"/>
-        <child link="laser_link"/>
-    </joint>
+    <axis xyz="0 0 0" />
+    <origin xyz="0 0 0.8" rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="laser_link"/>
+  </joint>
 
-    <link name="laser_link">
-     <collision>
+  <link name="laser_link">
+    <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-    <sphere radius=".2"/>
+        <sphere radius=".2"/>
       </geometry>
     </collision>
 
-       <visual>
+    <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-    <mesh filename="package://lidar_nav/meshes/lidar.dae"/>
+        <mesh filename="package://lidar_nav/meshes/lidar.dae"/>
       </geometry>
       <material name="red"/>
     </visual>
-    </link>
+  </link>
 
-    <gazebo reference="laser_link">
-     <sensor type="gpu_ray" name="head_hokuyo_sensor">
+  <gazebo reference="laser_link">
+    <sensor type="gpu_ray" name="head_hokuyo_sensor">
       <pose>0 0 0 0 0 0</pose>
       <visualize>false</visualize>
       <update_rate>40</update_rate>
