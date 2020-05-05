@@ -1,5 +1,9 @@
 <robot name="lidar_body">
 
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+
   <!-- root link, on the ground just below the model origin -->
   <link name="base_footprint">
     <visual>
@@ -33,7 +37,7 @@
     <collision>
       <origin xyz="0 0 0.37" />
       <geometry>
-         <box size="0.9 0.4 0.74"/>
+         <box size="0.9 0.4 0.5"/>
       </geometry>
     </collision>
   </link>
@@ -68,16 +72,6 @@
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
   </link>
-
-  <gazebo>
-    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
-      <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
-      <odometryRate>20.0</odometryRate>
-      <robotBaseFrame>base_footprint</robotBaseFrame>
-    </plugin>
-  </gazebo>
 
   <gazebo reference="camera_link">
     <sensor type="camera" name="camera1">
@@ -119,6 +113,18 @@
     </sensor>
   </gazebo>
 
+  <!-- velocity control topic -->
+  <gazebo>
+    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryRate>20.0</odometryRate>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+  <!-- LIDAR -->
   <joint name="laser_joint" type="fixed">
     <axis xyz="0 0 0" />
     <origin xyz="0 0 0.8" rpy="0 0 0"/>
@@ -175,6 +181,23 @@
       <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
         <topicName>/scan</topicName>
         <frameName>laser_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- bumper sensor -->
+  <gazebo reference="base_link">
+    <sensor name="main_bumper" type="contact">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>10.0</updateRate>
+      <material>Gazebo/blue</material>
+      <contact>
+        <collision>base_footprint_fixed_joint_lump__base_link_collision</collision>
+      </contact>
+      <plugin name="gazebo_ros_bumper_controller" filename="libgazebo_ros_bumper.so">   
+        <!-- of gazebo_msgs/ContactState message type -->
+        <bumperTopicName>bumper_vals</bumperTopicName> 
+        <frameName></frameName>
       </plugin>
     </sensor>
   </gazebo>
